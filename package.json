@@ -1,0 +1,36 @@
+{
+    "name": "dd-redux-resource",
+    "version": "1.0.0",
+    "description": "A tool to manage API calls status in Redux",
+    "main": "lib/index.js",
+    "scripts": {
+        "prepare": "npm run build",
+        "build": "tsc",
+        "test": "jest"
+    },
+    "files": [
+        "lib"
+    ],
+    "jest": {
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "moduleFileExtensions": [
+            "ts",
+            "js"
+        ],
+        "testRegex": "^.+\\.spec\\.ts$"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/jest": "23.3.9",
+        "@types/lodash": "4.14.118",
+        "jest": "23.6.0",
+        "lodash": "4.17.11",
+        "prettier": "1.15.1",
+        "redux": "4.0.1",
+        "ts-jest": "23.10.4",
+        "typescript": "3.1.6"
+    }
+}
