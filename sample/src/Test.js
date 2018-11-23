@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { popular } from './redux/resources';
 import { getMovies } from './redux/movies';
 import { DetailContainer } from './Detail';
+import FetchList from './FetchList';
 
 /**
  * Test component
@@ -19,14 +20,6 @@ class Test extends Component {
         this.setState({ selected: null });
     };
 
-    loadList = () => {
-        this.props.list();
-    }
-
-    componentDidMount() {
-        this.loadList();
-    }
-
     getMoviePosterUrl(movie) {
         if (!movie.poster_path) {
             return 'https://via.placeholder.com/154';
@@ -39,56 +32,47 @@ class Test extends Component {
 
     render() {
         return (
-            <>
-                <button onClick={this.loadList}>Reload</button>
-                <ul>
-                    <li>
-                        isFetching: {this.props.isFetching ? 'true' : 'false'}
-                    </li>
-                    <li>
-                        isSuccess: {this.props.isSuccess ? 'true' : 'false'}
-                    </li>
-                    <li>
-                        isFailure: {this.props.isFailure ? 'true' : 'false'}
-                    </li>
-                </ul>
-                {this.state.selected ? (
-                    <DetailContainer
-                        selected={this.state.selected}
-                        close={this.closeDetail}
-                    />
-                ) : (
-                    <ul>
-                        {this.props.movies.map(movie => (
-                            <li
-                                key={movie.id}
-                                onClick={() => this.selectMovie(movie.id)}
-                            >
-                                <img src={this.getMoviePosterUrl(movie)} />
-                                {movie.title}
-                            </li>
-                        ))}
-                    </ul>
+            <FetchList resource={popular}>
+                {({ isFetching, isSuccess, isFailure, fetch }) => (
+                    <>
+                        <button onClick={fetch}>Reload</button>
+                        <ul>
+                            <li>isFetching: {isFetching ? 'true' : 'false'}</li>
+                            <li>isSuccess: {isSuccess ? 'true' : 'false'}</li>
+                            <li>isFailure: {isFailure ? 'true' : 'false'}</li>
+                        </ul>
+                        {this.state.selected ? (
+                            <DetailContainer
+                                selected={this.state.selected}
+                                close={this.closeDetail}
+                            />
+                        ) : (
+                            <ul>
+                                {this.props.movies.map(movie => (
+                                    <li
+                                        key={movie.id}
+                                        onClick={() =>
+                                            this.selectMovie(movie.id)
+                                        }
+                                    >
+                                        <img
+                                            alt=""
+                                            src={this.getMoviePosterUrl(movie)}
+                                        />
+                                        {movie.title}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </>
                 )}
-            </>
+            </FetchList>
         );
     }
 }
 
-
 const mapStateToProps = state => ({
-    isFetching: popular.list.isFetching(state),
-    isSuccess: popular.list.isSuccess(state),
-    isFailure: popular.list.isFailure(state),
     movies: getMovies(state)
 });
-const mapDispatchToProps = dispatch => ({
-    list: () => {
-        return dispatch(popular.list());
-    }
-});
 
-export const TestContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Test);
+export const TestContainer = connect(mapStateToProps)(Test);

@@ -6,3 +6,6 @@ export const popular = createResource('/movie/popular', {
         per_page: 20
     }
 });
+export const movie = createResource('/movie', {
+    id: 'movies'
+});
