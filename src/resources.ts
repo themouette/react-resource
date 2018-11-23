@@ -15,23 +15,11 @@ import {
     HttpMethod,
     MiddlewareConfiguration,
     QueryString,
+    QueryStringParam,
     REDUCER_KEY
 } from './types';
 
-/* ======================== */
-/* Some utils               */
-/* ======================== */
-
-const combinePathAndQuery = (
-    path: string = '',
-    query: QueryString = ''
-): string => {
-    const [pathRoot = '', pathQs = ''] = path.split('?');
-    const pathSeparator = pathQs.length || query.length ? '?' : '';
-    const queryStringSeparator = pathQs.length && query.length ? '&' : '';
-
-    return `${pathRoot}${pathSeparator}${pathQs}${queryStringSeparator}${query}`;
-};
+import { stringifyQuery, combinePathAndQuery } from './queryString';
 
 /* ======================== */
 /* Selectors                */
@@ -116,7 +104,7 @@ export const GET = (
 ) =>
     fetchAction(
         HttpMethod.GET,
-        combinePathAndQuery(path, query),
+        combinePathAndQuery(path, stringifyQuery(query)),
         fetchOptions,
         options
     );

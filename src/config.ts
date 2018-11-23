@@ -6,8 +6,11 @@ import {
     ConfigState,
     FullState,
     MiddlewareConfiguration,
+    QueryString,
     REDUCER_KEY
 } from './types';
+
+import { combinePathAndQuery, combineQueries } from './queryString';
 
 /* Actions */
 
@@ -45,21 +48,29 @@ export const getRequestQualifiedUrl = (
     state: FullState,
     props: { backend?: string; path: string }
 ): string => {
-    const { backend: stateBackend } = getConfig(state);
+    const { backend: stateBackend, queryParams: stateQueryParams } = getConfig(
+        state
+    );
     const backend = props.backend || stateBackend;
+    const [path, queryString] = props.path.split('?');
+    const queryParams = combineQueries(stateQueryParams, queryString);
 
     const separator =
         backend.charAt(backend.length - 1) === '/' ||
         props.path.charAt(0) === '/'
             ? ''
             : '/';
-    return `${backend || props.backend}${separator}${props.path}`;
+    return `${backend || props.backend}${separator}${combinePathAndQuery(
+        path,
+        queryParams
+    )}`;
 };
 
 /* Reducer */
 
 const DEFAULT_CONFIG_STATE = {
     backend: '',
+    queryParams: '',
     fetchOptions: {}
 };
 export const configReducer: Reducer<ConfigState, AnyAction> = (
@@ -71,6 +82,10 @@ export const configReducer: Reducer<ConfigState, AnyAction> = (
             const configureAction = action as ActionConfigure;
             return {
                 backend: configureAction.payload.backend || state.backend,
+                queryParams:
+                    'queryParams' in configureAction.payload
+                        ? configureAction.payload.queryParams
+                        : state.queryParams,
                 fetchOptions: {
                     ...state.fetchOptions,
                     ...(configureAction.payload.fetchOptions || {})

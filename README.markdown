@@ -32,16 +32,22 @@ const reducer = combineReducers({
     ddReduxResourceReducer
 });
 
-const store = createStore(reducer, applyMiddleware(thunk, ddResourceMiddleware));
-store.dispatch(configure({
-    backend: 'https://api.datadoghq.com/api/v1/',
-    fetchOptions: {
-        credentials: 'same-origin', // include, *same-origin, omit
-        mode: "cors", // no-cors, cors, *same-origin
-        redirect: 'follow', // manual, *follow, error
-        headers: { 'Content-Type': 'application/json; charset=utf-8' }
-    }
-}));
+const store = createStore(
+    reducer,
+    applyMiddleware(thunk, ddResourceMiddleware)
+);
+store.dispatch(
+    configure({
+        backend: 'https://api.datadoghq.com/api/v1/',
+        queryParams: { api_key: 'my-secret-api-key' },
+        fetchOptions: {
+            credentials: 'same-origin', // include, *same-origin, omit
+            mode: 'cors', // no-cors, cors, *same-origin
+            redirect: 'follow', // manual, *follow, error
+            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        }
+    })
+);
 
 export { store };
 ```
@@ -56,6 +62,7 @@ export const dashboardLists = createResource('/dashboard/lists/manual');
 // Optionally you can override middleware default options
 export const statusIo = createResource('/status.json', {
     backend: '//pageid.statuspage.io/api/v2/',
+    queryParams: { api_key: 'another-api-key-to-override-default' },
     fetchOptions: {}
 });
 ```

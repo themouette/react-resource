@@ -11,6 +11,10 @@ import {
     getIsResourceFailure
 } from './resources';
 import {
+    combineQueries,
+    stringifyQuery
+} from './queryString';
+import {
     ResourceLifecycle,
     FetchResponse,
     FullState,
@@ -33,24 +37,30 @@ const generateRequestId = (
     path: string,
     resourceId: string,
     query: QueryString = ''
-) => `${method}(${resourceId})#${path}?${query}`;
+) => `${method}(${resourceId})#${path}?${stringifyQuery(query)}`;
 
 interface CreateResourceOptions {
+    /* Specify a resource id */
     id: string;
+    /* Default query string for all calls */
+    queryParams?: QueryString;
 }
 
 const createResourceList = <P>(
     resourcePath: string,
-    { id }: CreateResourceOptions
+    { id, queryParams: resourceQueryString }: CreateResourceOptions
 ) => {
     const list = (queryString: QueryString = '') => (
         dispatch: Dispatch
     ): Promise<FetchResponse<P>> => {
+        // id do not bother about default params to ensure
+        // selectors needs the exact same params as the action
         const requestId = list.requestId(queryString);
+        const combinedQueryString = combineQueries(resourceQueryString, queryString);
 
         dispatch(fetchStart(requestId, list.start));
 
-        return dispatch(GET(resourcePath, queryString)).then(
+        return dispatch(GET(resourcePath, combinedQueryString)).then(
             (response: FetchResponse<P>) => {
                 dispatch(fetchSuccess(requestId, list.success, response));
                 return response;
@@ -95,16 +105,19 @@ const createResourceList = <P>(
 
 const createResourceGet = <P>(
     resourcePath: string,
-    { id }: CreateResourceOptions
+    { id, queryParams: resourceQueryString }: CreateResourceOptions
 ) => {
     const get = (path: string, queryString: QueryString = '') => (
         dispatch: Dispatch
     ): Promise<FetchResponse<P>> => {
+        // id do not bother about default params to ensure
+        // selectors needs the exact same params as the action
         const requestId = get.requestId(path, queryString);
+        const combinedQueryString = combineQueries(resourceQueryString, queryString);
 
         dispatch(fetchStart(requestId, get.start));
 
-        return dispatch(GET(resourcePath, queryString)).then(
+        return dispatch(GET(resourcePath, combinedQueryString)).then(
             (response: FetchResponse<P>) => {
                 dispatch(fetchSuccess(requestId, get.success, response));
                 return response;

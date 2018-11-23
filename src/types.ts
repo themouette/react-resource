@@ -12,9 +12,19 @@ export enum HttpMethod {
 export interface MiddlewareConfiguration {
     backend: string;
     fetchOptions: Partial<RequestInit>;
+    /** default query params to apply for all requests */
+    queryParams?: QueryString;
 }
 
-export type QueryString = string;
+type QueryStringScalarParam = string | number | boolean | undefined | null;
+export type QueryStringParam =
+    | QueryStringScalarParam
+    | QueryStringScalarParam[]
+    | { [key: string]: QueryStringScalarParam | QueryStringScalarParam[] };
+interface QueryStringObject {
+    [param: string]: QueryStringParam | { [param: string]: QueryStringParam };
+}
+export type QueryString = string | QueryStringObject;
 
 /** Type for fetch middleware response */
 export interface FetchResponse<Data> {
@@ -112,14 +122,15 @@ export type ActionFetchLifecycle<R, E> =
 
 export interface ConfigState {
     backend: string;
+    queryParams?: QueryString;
     fetchOptions: Partial<RequestInit>;
 }
 // For now, we keep it simple and use a single array for every resource ids if
 // performances are an issure, this can be separated per resource.
 export interface ResourceState {
-    isFetching: string[],
-    isSuccess: string[],
-    isFailure: string[]
+    isFetching: string[];
+    isSuccess: string[];
+    isFailure: string[];
 }
 export interface State {
     config: ConfigState;
