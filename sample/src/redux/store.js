@@ -28,6 +28,10 @@ const store = createStore(
 store.dispatch(
     configure({
         backend: 'https://api.themoviedb.org/3',
+        queryParams: {
+            // moviedb api key
+            api_key: '9516d8cf6ae933c1151ff9e5014bfc0d'
+        },
         fetchOptions: {
             credentials: 'same-origin', // include, *same-origin, omit
             mode: 'cors', // no-cors, cors, *same-origin

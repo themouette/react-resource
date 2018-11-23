@@ -75,17 +75,16 @@ class Test extends Component {
     }
 }
 
-const qs = 'api_key=9516d8cf6ae933c1151ff9e5014bfc0d';
 
 const mapStateToProps = state => ({
-    isFetching: popular.list.isFetching(state, qs),
-    isSuccess: popular.list.isSuccess(state, qs),
-    isFailure: popular.list.isFailure(state, qs),
+    isFetching: popular.list.isFetching(state),
+    isSuccess: popular.list.isSuccess(state),
+    isFailure: popular.list.isFailure(state),
     movies: getMovies(state)
 });
 const mapDispatchToProps = dispatch => ({
     list: () => {
-        return dispatch(popular.list(qs));
+        return dispatch(popular.list());
     }
 });
 
