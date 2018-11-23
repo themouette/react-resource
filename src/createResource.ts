@@ -11,6 +11,7 @@ import {
     getIsResourceFailure
 } from './resources';
 import {
+    combinePath,
     combineQueries,
     stringifyQuery
 } from './queryString';
@@ -116,8 +117,9 @@ const createResourceGet = <P>(
         const combinedQueryString = combineQueries(resourceQueryString, queryString);
 
         dispatch(fetchStart(requestId, get.start));
+        const fullPath = combinePath(resourcePath, path);
 
-        return dispatch(GET(resourcePath, combinedQueryString)).then(
+        return dispatch(GET(fullPath, combinedQueryString)).then(
             (response: FetchResponse<P>) => {
                 dispatch(fetchSuccess(requestId, get.success, response));
                 return response;

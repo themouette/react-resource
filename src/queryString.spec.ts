@@ -1,4 +1,4 @@
-import { stringifyQuery, combineQueries } from './queryString';
+import { stringifyQuery, combineQueries, combinePath } from './queryString';
 
 describe('#stringifyQuery()', () => {
     it('should stringify empty string', () => {
@@ -120,5 +120,25 @@ describe('#combineQueries()', () => {
         );
 
         expect(combo).toEqual('hello.whats=up&same.0=old');
+    });
+});
+
+describe('#combinePath()', () => {
+    it('should leave a single path untouched', () => {
+        const ret = combinePath('/hello/this/');
+
+        expect(ret).toEqual('/hello/this/')
+    });
+
+    it('should insert /', () => {
+        const ret = combinePath('/hello', 'this');
+
+        expect(ret).toEqual('/hello/this')
+    });
+
+    it('should not insert double /', () => {
+        const ret = combinePath('/hello/', '/this');
+
+        expect(ret).toEqual('/hello/this')
     });
 });

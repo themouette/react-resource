@@ -67,10 +67,32 @@ export const combineQueries = (
     return stringifyQuery(combinedQueries);
 };
 
-export const combinePathAndQuery = (path: string = '', query: string = ''): string => {
+export const combinePathAndQuery = (
+    path: string = '',
+    query: string = ''
+): string => {
     const [pathRoot = '', pathQs = ''] = path.split('?');
     const pathSeparator = pathQs.length || query.length ? '?' : '';
     const queryStringSeparator = pathQs.length && query.length ? '&' : '';
 
     return `${pathRoot}${pathSeparator}${pathQs}${queryStringSeparator}${query}`;
 };
+
+export const combinePath = (
+    ...parts: Array<string | null | undefined>
+): string =>
+    parts.reduce((acc: string, p) => {
+        if (!p) {
+            return acc;
+        }
+        let ret = acc;
+
+        if (acc.endsWith('/')) {
+            ret = acc.substring(0, acc.length - 1);
+        }
+        if (p.startsWith('/')) {
+            return `${ret}${p}`;
+        }
+
+        return `${ret}/${p}`;
+    }, '');
